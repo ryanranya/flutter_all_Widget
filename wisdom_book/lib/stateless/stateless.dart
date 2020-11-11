@@ -1,7 +1,9 @@
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wisdom_book/stateless/data/stateless_data.dart';
+import 'package:wisdom_book/stateless/page/AboutDialog_page.dart';
 import 'package:wisdom_book/stateless/page/aboutlisttile_page.dart';
 
 class WBStatelessPage extends StatefulWidget {
@@ -34,7 +36,7 @@ class _WBStatelessPageState extends State<WBStatelessPage> {
                 ),
               ),
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AboutListTilePage()));
+                pushNextPage(index, context);
               },
             );
           },
@@ -43,6 +45,22 @@ class _WBStatelessPageState extends State<WBStatelessPage> {
     );
   }
 
+  void pushNextPage(int index, BuildContext context){
+    if (index == 0) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AboutListTilePage()));
+    }else if(index == 1) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AboutDialogPage()));
+    }else if(index == 2) {
+//      Navigator.push(context, MaterialPageRoute(builder: (context) => PositionedDirectionalPage()));
+    networking();
+    }
+  }
+
+  void networking() async{
+    var dio = Dio();
+    Response response = await dio.get('https://google.com');
+    print(response);
+  }
 
 
 }
