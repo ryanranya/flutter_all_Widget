@@ -2,6 +2,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:wisdom_book/api/api_config.dart';
+import 'package:wisdom_book/api/api_error.dart';
+import 'package:wisdom_book/api/api_manager.dart';
+import 'package:wisdom_book/api/api_url.dart';
 import 'package:wisdom_book/stateless/data/stateless_data.dart';
 import 'package:wisdom_book/stateless/page/AboutDialog_page.dart';
 import 'package:wisdom_book/stateless/page/aboutlisttile_page.dart';
@@ -51,8 +55,8 @@ class _WBStatelessPageState extends State<WBStatelessPage> {
     }else if(index == 1) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => AboutDialogPage()));
     }else if(index == 2) {
+      networkingBookNameList();
 //      Navigator.push(context, MaterialPageRoute(builder: (context) => PositionedDirectionalPage()));
-    networking();
     }
   }
 
@@ -60,6 +64,15 @@ class _WBStatelessPageState extends State<WBStatelessPage> {
     var dio = Dio();
     Response response = await dio.get('https://google.com');
     print(response);
+  }
+
+  void networkingBookNameList(){
+    ApiManager().post(url: ApiUrl.bookNameUrl,data: {'id':'1'},successCallback: (re){
+      print('网络请求完成${re}');
+    },errorCallback: (HttpError error){
+      print('123456789:${error.code}');
+    },
+        tag: 'tag');
   }
 
 
