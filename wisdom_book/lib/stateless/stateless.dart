@@ -1,12 +1,10 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:wisdom_book/api/api_config.dart';
 import 'package:wisdom_book/api/api_error.dart';
 import 'package:wisdom_book/api/api_manager.dart';
 import 'package:wisdom_book/api/api_url.dart';
-import 'package:wisdom_book/stateless/data/stateless_data.dart';
+import 'package:wisdom_book/stateless/model/book_name_model.dart';
 import 'package:wisdom_book/stateless/page/AboutDialog_page.dart';
 import 'package:wisdom_book/stateless/page/aboutlisttile_page.dart';
 
@@ -16,6 +14,12 @@ class WBStatelessPage extends StatefulWidget {
 }
 
 class _WBStatelessPageState extends State<WBStatelessPage> {
+  static final List<BookNameList> _bookNameList = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    networkingBookNameList();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +27,7 @@ class _WBStatelessPageState extends State<WBStatelessPage> {
       ),
       body: Center(
         child: ListView.builder(
-          itemCount: StatelessData.statelessDataList.length,
+          itemCount: _bookNameList.length,
           itemBuilder: (context, index){
             // ignore: dead_code
             return GestureDetector(
@@ -35,7 +39,7 @@ class _WBStatelessPageState extends State<WBStatelessPage> {
                 ),
                 child: Row(
                   children: [
-                    Text(StatelessData.statelessDataList[index]['name'],style: TextStyle(fontSize: 20),),
+                    Text(_bookNameList[index].book_name,style: TextStyle(fontSize: 20),),
                   ],
                 ),
               ),
@@ -55,7 +59,6 @@ class _WBStatelessPageState extends State<WBStatelessPage> {
     }else if(index == 1) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => AboutDialogPage()));
     }else if(index == 2) {
-      networkingBookNameList();
 //      Navigator.push(context, MaterialPageRoute(builder: (context) => PositionedDirectionalPage()));
     }
   }
@@ -69,11 +72,16 @@ class _WBStatelessPageState extends State<WBStatelessPage> {
   void networkingBookNameList(){
     ApiManager().post(url: ApiUrl.bookNameUrl,data: {'id':'1'},successCallback: (re){
       print('网络请求完成${re}');
+//      final jsonResponse = json.decode(re);
+      BookNameModel model = BookNameModel.fromJson(re);
+      print(model.data[0].book_name);
+      setState(() {
+        _bookNameList.addAll(model.data);
+      });
     },errorCallback: (HttpError error){
       print('123456789:${error.code}');
     },
         tag: 'tag');
   }
-
 
 }

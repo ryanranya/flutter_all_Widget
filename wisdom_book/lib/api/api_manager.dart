@@ -17,14 +17,6 @@ typedef T JsonParse<T>(dynamic data);
 class ApiManager {
   Map<String, CancelToken> _cancelTokens = Map<String, CancelToken>();
 
-//  设置请求超时时间
-  static const CONNECT_TIMEOUT = 30000;
-  static const RECEIVE_TIMEOUT = 30000;
-
-//  设置请求方式
-  static const String GET = 'GET';
-  static const String POST = 'POST';
-
   Dio _client;
   static final ApiManager _instance = ApiManager._internal();
 
@@ -37,8 +29,8 @@ class ApiManager {
     if (_client == null) {
       /// 全局属性：请求前缀、连接超时时间、响应超时时间
       BaseOptions options = BaseOptions(
-        connectTimeout: CONNECT_TIMEOUT,
-        receiveTimeout: RECEIVE_TIMEOUT,
+        connectTimeout: ApiConfig.CONNECT_TIMEOUT,
+        receiveTimeout: ApiConfig.RECEIVE_TIMEOUT,
       );
       _client = Dio(options);
 //        ..httpClientAdapter = Http2Adapter(
@@ -81,7 +73,7 @@ class ApiManager {
     _request(
         url: url,
         params: params,
-        method: GET,
+        method: ApiConfig.GET,
         successCallback: successCallback,
         errorCallback: errorCallback,
         tag: tag);
@@ -100,7 +92,7 @@ class ApiManager {
     _request(
       url: url,
       data: data,
-      method: POST,
+      method: ApiConfig.POST,
       params: params,
       successCallback: successCallback,
       errorCallback: errorCallback,
@@ -157,16 +149,16 @@ class ApiManager {
           options: options,
           cancelToken: cancelToken);
       int statusCode = response.data["code"];
-      print('当前的 statusCode 是：${statusCode}');
+//      print('当前的 statusCode 是：${statusCode}');
       if (statusCode == 0) {
         //成功
         if (successCallback != null) {
-          print('请求成功之后返回的值${response.data['data']}');
-          successCallback(response.data["data"]);
+//          print('请求成功之后返回的值${response.data['data']}');
+          successCallback(response.data);
         }
       } else {
         //失败
-        String message = response.data["statusDesc"];
+        String message = response.data["message"];
         LogUtil.v("请求服务器出错：$message");
         if (errorCallback != null) {
           errorCallback(HttpError(statusCode.toString(), message));
@@ -271,10 +263,10 @@ class ApiManager {
     }
 //    设置默认参数
     params = params ?? {};
-    options?.method = POST;
+    options?.method = ApiConfig.POST;
     options = options ??
         Options(
-          method: POST,
+          method: ApiConfig.POST,
         );
 
     try {
@@ -327,7 +319,7 @@ class ApiManager {
   }) async {
     return _requestAsync(
       url: url,
-      method: GET,
+      method: ApiConfig.GET,
       params: params,
       options: options,
       jsonParse: jsonParse,
@@ -346,7 +338,7 @@ class ApiManager {
   }) async {
     return _requestAsync(
       url: url,
-      method: POST,
+      method: ApiConfig.POST,
       data: data,
       params: params,
       options: options,
@@ -494,11 +486,11 @@ class ApiManager {
     params = params ?? {};
 
     //强制 POST 请求
-    options?.method = POST;
+    options?.method = ApiConfig.POST;
 
     options = options ??
         Options(
-          method: POST,
+          method: ApiConfig.POST,
         );
 
     url = _restfulUrl(url, params);
