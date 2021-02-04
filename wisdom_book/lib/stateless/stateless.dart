@@ -63,12 +63,6 @@ class _WBStatelessPageState extends State<WBStatelessPage> {
     }
   }
 
-  void networking() async{
-    var dio = Dio();
-    Response response = await dio.get('https://google.com');
-    print(response);
-  }
-
   void networkingBookNameList(){
     ApiManager().post(url: ApiUrl.bookNameUrl,data: {'id':'1'},successCallback: (re){
       print('网络请求完成${re}');
